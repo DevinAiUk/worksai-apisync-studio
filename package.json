@@ -1,0 +1,16 @@
+{
+  "name": "@worksai/worksai-apisync-studio",
+  "version": "1.0.0",
+  "description": "Collaborative API testing workspace that detects OpenAPI schema drift and auto-heals test assertions.",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.mjs",
+  "scripts": {
+    "test": "node --test tests/product.test.mjs",
+    "lint": "node --check src/index.mjs && node --check tests/product.test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DevinAiUk/worksai-apisync-studio.git"
+  }
+}
