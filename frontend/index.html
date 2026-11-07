@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>WorksAi APISync Studio — Openapi Contract Drift Detector And Test Assertion Generator | WorksAI</title>
+  <meta name="description" content="WorksAi APISync Studio compares your canonical OpenAPI route specifications against saved client request collections, flagging undocumented endpoints, missing"/>
+  <link rel="canonical" href="https://apisync.worksai.org/"/>
+  <!-- Google Analytics 4 (WorksAi Property 493870207 — Privacy-Safe Mode) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-113353C400"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-113353C400', {
+      anonymize_ip: true,
+      allow_google_signals: false,
+      allow_ad_personalization_signals: false,
+      page_location: window.location.origin + window.location.pathname
+    });
+  </script>
+  <link rel="stylesheet" href="/assets/styles.css"/>
+</head>
+<body>
+  <header class="app-topbar" role="banner">
+    <div class="brand-cluster">
+      <a href="https://worksai.org" style="display:flex;align-items:center;gap:0.45rem;color:#F8FAFC;font-weight:700;text-decoration:none;">
+        <span style="display:inline-flex;width:26px;height:26px;">__WORKSAI_CREST_PLACEHOLDER__</span>
+        <span>WorksAI</span>
+      </a>
+      <span style="color:#475569;">/</span>
+      <a href="/" style="color:#38BDF8;font-weight:700;text-decoration:none;">WorksAi APISync Studio</a>
+      <span class="badge-pill" style="background:#1E293B;color:#94A3B8;">v1.2.0</span>
+    </div>
+    <nav aria-label="Application Navigation" style="display:flex;align-items:center;gap:0.85rem;flex-wrap:wrap;font-size:0.84rem;">
+      <a href="/" style="color:#38BDF8;font-weight:700;">Application Workspace</a>
+      <a href="/docs" style="color:#CBD5E1;">Documentation</a>
+      <a href="/guide" style="color:#CBD5E1;">Technical Guide &amp; FAQ</a>
+      <a href="/api/mcp" style="color:#A7F3D0;font-family:monospace;font-size:0.78rem;" title="Model Context Protocol JSON-RPC 2.0 Endpoint">MCP (3 Tools)</a>
+      <span id="authModeBadge" class="badge-pill badge-demo">DEMO SANDBOX</span>
+      <button type="button" id="authActionBtn" class="btn btn-ghost" style="padding:0.28rem 0.65rem;font-size:0.76rem;" onclick="window.WAI.openAuthModal()">Sign In to Workspace</button>
+    </nav>
+  </header>
+
+  <main class="workspace-shell" role="main">
+    <div id="statusBanner" class="toast-banner" role="status" aria-live="polite">
+      Ready • WorksAi APISync Studio Interactive Environment Active
+    </div>
+    
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.85rem;">
+          <div>
+            <h1 style="margin:0;font-size:1.35rem;">WorksAi APISync Studio <span style="font-size:0.85rem;color:#94A3B8;font-weight:400;">— Collaborative API testing workspace that detects OpenAPI schema drift and auto-heals test assertions.</span></h1>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <label for="projectTitleInput" style="font-size:0.75rem;color:#94A3B8;">Active Project:</label>
+            <input id="projectTitleInput" class="input-ctrl" style="width:230px;font-weight:600;" value="WorksAi APISync Studio Starter Project"/>
+          </div>
+        </div>
+        
+    
+      <div class="kpi-strip" aria-label="OpenAPI Contract Diff Summary">
+        <div class="kpi-card"><div class="kpi-label">Inspected Endpoints</div><div class="kpi-val" id="asEndpointCount">3</div></div>
+        <div class="kpi-card"><div class="kpi-label">Breaking Mutations</div><div class="kpi-val" id="asBreakingCount" style="color:#EF4444;">2</div></div>
+        <div class="kpi-card"><div class="kpi-label">Non-Breaking Additions</div><div class="kpi-val" id="asNonBreakingCount" style="color:#10B981;">1</div></div>
+        <div class="kpi-card"><div class="kpi-label">Contract Test Status</div><div class="kpi-val" id="asTestStatus" style="color:#38BDF8;">PASS (3/3)</div></div>
+      </div>
+      <div class="app-grid-3">
+        <!-- Left: Structured Endpoint Explorer & Saved Specs -->
+        <aside class="panel-box" aria-label="OpenAPI Endpoint Explorer">
+          <h2 class="panel-title"><span>Endpoints in Spec</span></h2>
+          <div class="form-field">
+            <label for="asSeverityFilter">Filter by Drift Severity</label>
+            <select id="asSeverityFilter" class="input-ctrl" onchange="window.WAI.renderApiSyncView()">
+              <option value="all">All Endpoints &amp; Changes</option>
+              <option value="breaking">Breaking Changes Only</option>
+              <option value="safe">Non-Breaking / Compatible</option>
+            </select>
+          </div>
+          <ul id="asEndpointList" style="list-style:none;padding:0;margin:0 0 0.85rem;display:flex;flex-direction:column;gap:0.45rem;"></ul>
+          <hr style="border:none;border-top:1px solid #1E293B;margin:0.85rem 0;"/>
+          <h2 class="panel-title"><span>Saved Contracts (R2)</span><button type="button" class="btn btn-ghost" onclick="window.WAI.newProject()">+ New</button></h2>
+          <div class="form-field"><label for="presetSelect">Load OpenAPI Contract Pair</label><select id="presetSelect" class="input-ctrl" onchange="window.WAI.loadPreset(this.value)"></select></div>
+          <div class="form-field"><label for="fileImportInput">Import OpenAPI (.json/.yaml)</label><input id="fileImportInput" type="file" accept=".json,.yaml,.yml" class="input-ctrl" onchange="window.WAI.importFile(event)"/></div>
+          <ul id="projectList" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.45rem;max-height:180px;overflow-y:auto;"></ul>
+        </aside>
+
+        <!-- Center: Actionable Contract Diff Table & Spec Editor -->
+        <section class="panel-box" aria-label="Side-by-Side OpenAPI Contract Diffs">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+            <h2 class="panel-title" style="margin:0;"><span>Contract Drift &amp; Breaking-Change Matrix</span></h2>
+            <div style="display:flex;gap:0.4rem;">
+              <button type="button" class="btn btn-emerald" onclick="window.WAI.saveCurrentProject()">Save Contract</button>
+              <button type="button" class="btn btn-primary" onclick="window.WAI.exportActiveProject('json')">Export Diff .JSON</button>
+              <button type="button" class="btn btn-ghost" onclick="window.WAI.exportActiveProject('md')">Export CI Report .MD</button>
+            </div>
+          </div>
+          <table class="data-table" aria-label="OpenAPI Diff Matrix">
+            <thead><tr><th>Endpoint &amp; Method</th><th>Field / Parameter</th><th>Baseline (v1)</th><th>Candidate (v2)</th><th>Severity</th></tr></thead>
+            <tbody id="asDiffTableBody"></tbody>
+          </table>
+          <div style="margin-top:0.85rem;">
+            <label for="workspaceInput" style="display:block;font-size:0.76rem;color:#94A3B8;margin-bottom:0.25rem;">OpenAPI Before / After Specification Payload (JSON — edits re-evaluate diffs live)</label>
+            <textarea id="workspaceInput" rows="5" class="input-ctrl" style="font-family:monospace;" oninput="window.WAI.renderApiSyncView()"></textarea>
+          </div>
+        </section>
+
+        <!-- Right: Interactive Contract Test Runner & Migration Shims -->
+        <aside class="panel-box" aria-label="Contract Test Assertion Runner">
+          <h2 class="panel-title"><span>Contract Test Runner</span></h2>
+          <div class="form-field">
+            <label for="asTestPayload">Sample Request Payload (JSON)</label>
+            <textarea id="asTestPayload" rows="4" class="input-ctrl" style="font-family:monospace;">{"tenantId": 1042, "items": [{"sku": "WAI-01", "qty": 2}]}</textarea>
+          </div>
+          <button type="button" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:0.65rem;" onclick="window.WAI.runApiContractAssertions()">Run Contract Assertions</button>
+          <div id="asAssertionList" style="display:flex;flex-direction:column;gap:0.4rem;font-size:0.8rem;margin-bottom:0.85rem;"></div>
+          <button type="button" class="btn btn-purple" style="width:100%;justify-content:center;" onclick="window.WAI.runWithAiCopilot()">Generate Gateway Migration Shim</button>
+          <div id="aiCopilotBox" style="margin-top:0.6rem;font-size:0.79rem;color:#A7F3D0;"></div>
+        </aside>
+      </div>
+    
+  </main>
+
+  <!-- Server-Signed Authentication & Demo Sandbox Modal -->
+  <div id="authModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+    <div class="modal-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+        <h2 id="authModalTitle" style="margin:0;font-size:1.05rem;">Workspace Authentication (HMAC-SHA256)</h2>
+        <button type="button" class="btn btn-ghost" onclick="window.WAI.closeAuthModal()">Close</button>
+      </div>
+      <p style="font-size:0.8rem;color:#94A3B8;margin:0 0 0.85rem;">
+        Workspace identity is cryptographically signed on the server via WebCrypto HMAC-SHA256. Unauthenticated client headers are never trusted.
+      </p>
+      <form onsubmit="return window.WAI.submitSignIn(event)">
+        <div class="form-field"><label for="authEmailInput">Engineer Email *</label><input id="authEmailInput" type="email" class="input-ctrl" value="engineer@worksai.org" required/></div>
+        <div class="form-field"><label for="authTenantInput">Tenant Workspace Slug *</label><input id="authTenantInput" class="input-ctrl" value="tenant-acme-prod" required/></div>
+        <div class="form-field"><label for="authPasscodeInput">Workspace Passcode (min 6 chars) *</label><input id="authPasscodeInput" type="password" class="input-ctrl" value="worksai-2026" required/></div>
+        <div style="display:flex;gap:0.5rem;margin-top:0.85rem;">
+          <button type="submit" class="btn btn-primary" style="flex:1;justify-content:center;">Sign In (Server Token)</button>
+          <button type="button" class="btn btn-ghost" onclick="window.WAI.startDemoSession()">Use Isolated Demo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    window.__WORKSAI_META__ = __WORKSAI_META_JSON__;
+    window.__WORKSAI_INITIAL__ = __WORKSAI_INITIAL_JSON__;
+  </script>
+  <script src="/assets/app.js"></script>
+</body>
+</html>
